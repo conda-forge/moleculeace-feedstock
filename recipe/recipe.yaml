@@ -1,28 +1,31 @@
-{% set name = "moleculeace" %}
-{% set version = "3.0.0" %}
+schema_version: 1
+
+context:
+  name: moleculeace
+  version: "3.0.0"
 
 package:
-  name: {{ name|lower }}
-  version: {{ version }}
+  name: ${{ name|lower }}
+  version: ${{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/MoleculeACE-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/MoleculeACE-${{ version }}.tar.gz
   sha256: 5faf9d0492c6d40c07a442cde195ee75f8c0b2af658e05273a2d861292d9d8f2
   patches:
     - rdkit.patch
 
 build:
+  number: 2
   noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  number: 1
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
-    - python {{ python_min }}
+    - python ${{ python_min }}.*
     - pip
     - setuptools
   run:
-    - python >={{ python_min }}
+    - python >=${{ python_min }}
     - tqdm
     - requests
     - twine
@@ -40,20 +43,20 @@ requirements:
     - transformers
     - tensorflow
 
-test:
-  imports:
-    - MoleculeACE
-  commands:
-    - pip check
-  requires:
-    - pip
-    - python {{ python_min }}
+tests:
+  - python:
+      imports:
+        - MoleculeACE
+      pip_check: true
+      python_version:
+        - ${{ python_min }}
+        - "*"
 
 about:
-  home: https://github.com/molML/MoleculeACE
   summary: MoleculeACE
   license: MIT
   license_file: LICENCE
+  homepage: https://github.com/molML/MoleculeACE
 
 extra:
   recipe-maintainers:
